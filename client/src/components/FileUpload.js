@@ -3,11 +3,17 @@ import axios from 'axios'
 
 export const FileUpload = () => { 
 const [file,setFile] = useState('');
-const [filename,setFileName] = useState ('Choose File')
+const [filename,setFileName] = useState ('Choose File');
+const [transformedText, setTransformedText] = useState ("");
+
 
 const onChange = e => {
     setFile(e.target.files[0])
     setFileName(e.target.files[0].name)
+}
+
+const styles = {
+    paddingTop: '30px'
 }
 
 const onSubmit = async e => {
@@ -15,6 +21,7 @@ const onSubmit = async e => {
     const formData = new FormData();
     formData.append('textFile', file);
   
+    if (file != null) 
     try {
         const res = await axios.post('http://localhost:8080/api/text/process', formData, {
             headers: {
@@ -22,7 +29,10 @@ const onSubmit = async e => {
             }
         });
 
+  
     console.log(res.data.transformedText)
+
+    setTransformedText(res.data.transformedText)
 
     } catch (err) {
         console.log(err);
@@ -43,7 +53,13 @@ const onSubmit = async e => {
           type ="submit" 
           value="Upload" 
           className='"btn btn-primary btn-block mt4' />
-        </form>
+
+    <div className="form-group" style={styles}>
+    <label htmlFor="exampleFormControlTextarea1">{"Transformed text"}</label>
+    <textarea className="form-control" id="exampleFormControlTextarea" rows="10" defaultValue = {transformedText}></textarea>
+    </div>
+    </form>
+    
     </Fragment>
   )
 }
